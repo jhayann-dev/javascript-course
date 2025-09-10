@@ -176,12 +176,15 @@ Save your Hour 3 work to your portfolio:
 
 ```bash
 git add .
+
 git commit
 ```
 
 Copy this commit message:
 
+
 ```feat: add visual feedback, validation, and final polish
+
 
 - Implement win/lose visual feedback via background color changes
 - Add input validation with helpful error messages and early returns
