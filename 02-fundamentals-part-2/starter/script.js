@@ -294,125 +294,219 @@
 
 //Objects vs Arrays: When to Use What
 
-const listOfYears = [1991, 1984, 2008, 2020];
-const shoppingList = ["apples", "bananas", "milk", "bread"];
-const testScores = [85, 92, 78, 96];
+// const listOfYears = [1991, 1984, 2008, 2020];
+// const shoppingList = ["apples", "bananas", "milk", "bread"];
+// const testScores = [85, 92, 78, 96];
 
-const person = {
-  name: "Ann",
-  age: 20,
-  occupation: "Student",
-};
+// const person = {
+//   name: "Ann",
+//   age: 20,
+//   occupation: "Student",
+// };
 
-const car = {
-  brand: "Toyota",
-  model: "Camry",
-  year: 2025,
-  color: "white",
-};
+// const car = {
+//   brand: "Toyota",
+//   model: "Camry",
+//   year: 2025,
+//   color: "white",
+// };
 
-// Objects can contain arrays, arrays can contain objects
-const student = {
-  name: "Jaime",
-  grades: [85, 92, 78],
-  address: {
-    street: "123 Main St",
-    city: "New York",
-  },
-};
+// // Objects can contain arrays, arrays can contain objects
+// const student = {
+//   name: "Jaime",
+//   grades: [85, 92, 78],
+//   address: {
+//     street: "123 Main St",
+//     city: "New York",
+//   },
+// };
 
-console.log(student.grades[1]);
-console.log(student.address.city);
-
-
-// Object Methods
-
-const jonas = {
-  firstName: "Jonas",
-  lastName: "Doe",
-  birthYear: 1995,
-  job: "tambay",
-  friends: ["Jeremy", "Ana", "Ella"],
-  hasDriversLicense: true,
-
-  calcAge: function (birthYear) {
-    return 2025 - birthYear;
-  },
-};
-
-console.log(jonas.calcAge(2000));
+// console.log(student.grades[1]);
+// console.log(student.address.city);
 
 
-//'this' keyword
+// // Object Methods
 
-const jonasImproved = {
-  firstName: "Jonas",
-  lastName: "Doe",
-  birthYear: 1995,
-  job: "tambay",
-  friends: ["Michael", "Peter", "Steven"],
-  hasDriversLicense: true,
+// const jonas = {
+//   firstName: "Jonas",
+//   lastName: "Doe",
+//   birthYear: 1995,
+//   job: "tambay",
+//   friends: ["Jeremy", "Ana", "Ella"],
+//   hasDriversLicense: true,
 
-  calcAge: function () {
-    this.age = 2025 - this.birthYear;
-    return this.age;
-  },
-    getSummary: function () {
-    return `${this.firstName} is a ${this.calcAge()}-year old ${this.job}, and he has ${this.hasDriversLicense ? 'a' : 'no'} driver's license.`;
-  }     
-};
+//   calcAge: function (birthYear) {
+//     return 2025 - birthYear;
+//   },
+// };
 
-console.log(jonasImproved.calcAge());
-console.log(jonasImproved.age);
-console.log(jonasImproved.getSummary());
+// console.log(jonas.calcAge(2000));
 
 
-// Coding Challenge #3 - User Profile System
+// //'this' keyword
 
-const user = {
-  firstName: "Sarah",
-  lastName: "Johnson",
-  birthYear: 1995,
-  location: "New York",
-  interests: ["photography", "travel", "coding"],
-  friends: [
-    { name: "Michael", status: "active" },
-    { name: "Emma", status: "inactive" },
-    { name: "David", status: "active" },
-  ],
-  isActive: true,
+// const jonasImproved = {
+//   firstName: "Jonas",
+//   lastName: "Doe",
+//   birthYear: 1995,
+//   job: "tambay",
+//   friends: ["Michael", "Peter", "Steven"],
+//   hasDriversLicense: true,
 
-  calcAge: function () {
-    this.age = 2025 - this.birthYear;
-    return this.age;
-  },
-  addFriend: function (name, status = "active") {
-    this.friends.push({ name, status });
-    return this.friends.length;
-  },
-  getActiveFriends: function () {
-    const activeFriends = this.friends.filter(friend => friend.status === "active");
-    return activeFriends;       
-  },
-  toggleStatus: function () {
-    this.isActive = !this.isActive;
-    return this.isActive;
-  },
-  getSummary: function () {
-    const age = this.calcAge();
-    const activeFriends = this.getActiveFriends();
-    const status = this.isActive ? "active" : "inactive";
+//   calcAge: function () {
+//     this.age = 2025 - this.birthYear;
+//     return this.age;
+//   },
+//     getSummary: function () {
+//     return `${this.firstName} is a ${this.calcAge()}-year old ${this.job}, and he has ${this.hasDriversLicense ? 'a' : 'no'} driver's license.`;
+//   }     
+// };
 
-    return `${this.firstName} ${this.lastName} ${age} from ${this.location}.
-    Currently ${status} with ${activeFriends.length} active friends.
-    Interests: ${this.interests.join(", ")}`;
-  },
-};
+// console.log(jonasImproved.calcAge());
+// console.log(jonasImproved.age);
+// console.log(jonasImproved.getSummary());
 
-console.log(user.getSummary());
-user.addFriend("Alex", "active");
-user.toggleStatus();
-console.log(`\nAfter updates:`);
-console.log(user.getSummary());
+
+// // Coding Challenge #3 - User Profile System
+
+// const user = {
+//   firstName: "Sarah",
+//   lastName: "Johnson",
+//   birthYear: 1995,
+//   location: "New York",
+//   interests: ["photography", "travel", "coding"],
+//   friends: [
+//     { name: "Michael", status: "active" },
+//     { name: "Emma", status: "inactive" },
+//     { name: "David", status: "active" },
+//   ],
+//   isActive: true,
+
+//   calcAge: function () {
+//     this.age = 2025 - this.birthYear;
+//     return this.age;
+//   },
+//   addFriend: function (name, status = "active") {
+//     this.friends.push({ name, status });
+//     return this.friends.length;
+//   },
+//   getActiveFriends: function () {
+//     const activeFriends = this.friends.filter(friend => friend.status === "active");
+//     return activeFriends;       
+//   },
+//   toggleStatus: function () {
+//     this.isActive = !this.isActive;
+//     return this.isActive;
+//   },
+//   getSummary: function () {
+//     const age = this.calcAge();
+//     const activeFriends = this.getActiveFriends();
+//     const status = this.isActive ? "active" : "inactive";
+
+//     return `${this.firstName} ${this.lastName} ${age} from ${this.location}.
+//     Currently ${status} with ${activeFriends.length} active friends.
+//     Interests: ${this.interests.join(", ")}`;
+//   },
+// };
+
+// console.log(user.getSummary());
+// user.addFriend("Alex", "active");
+// user.toggleStatus();
+// console.log(`\nAfter updates:`);
+// console.log(user.getSummary());
 
     
+//Select DOM Elements
+//querySelector
+
+// const message = document.querySelector('.message');
+// console.log(message);
+
+// const button = document.querySelector("#btn");
+// console.log(button);
+
+// const heading = document.querySelector("h1");
+// console.log(heading);
+
+// console.log(message.textContent);
+// console.log(button.id);
+// console.log(heading.tagName);
+// console.log(heading.textContent);
+
+// //getElementById
+// const buttonById = document.getElementById("btn");
+// console.log(buttonById);
+// console.log(buttonById === button);
+
+// //querySelectorAll
+// const allParagraphs = document.querySelectorAll("p");
+// console.log(allParagraphs);
+// console.log(allParagraphs[0]);
+
+
+// //Modifying Element Content
+
+// const message = document.querySelector('.message');
+// console.log(message.textContent);
+// message.textContent = "Hello from javascript!";
+// console.log(message.textContent);
+
+// //inner HTML
+// message.innerHTML = "<strong>Bold text from js!</strong>";
+
+// //inner text
+// console.log(message.innerText);
+
+
+// //Input Element Values
+// const input = document.querySelector('.guess');
+// console.log(input.value);
+// input.value = "Default Text";
+
+
+// // Changing element styles
+// const heading = document.querySelector('h1');
+// heading.style.color = "red";
+// heading.style.backgroundColor = "yellow";
+// heading.style.fontSize = "3rem";
+
+// const button = document.querySelector('#btn');
+// button.style.backgroundColor = "blue";
+// button.style.padding = "10px 20px";
+// button.style.borderRadius = "10px";
+
+
+// //Event Listeners
+
+// button.addEventListener('click', function() {
+//     console.log('Button clicked!');
+//     message.textContent = "Button was clicked!";
+//     message.style.color = "green";
+// });
+
+// let clickCount = 0;
+// button.addEventListener('click', function() {
+//     clickCount++;
+//     button.textContent = `Clicked ${clickCount} times`;
+//     button.style.backgroundColor = `hsl(${clickCount * 30}, 70%, 50%)`;
+// });
+
+
+// //Input events
+// const display = document.querySelector('.message');
+// input.addEventListener('input', function() {
+//     const userText = input.value;
+//     message.textContent = `You typed: ${userText}`;
+//     message.style.fontSize = `${userText.length + 10}px`;
+// });
+
+
+// //Keyboard Events
+// input.addEventListener('keydown', function(event) {
+//     console.log(`Key pressed: ${event.key}`);   
+//     if (event.key === 'Enter') {
+//         message.textContent = `You pressed Enter! Text was: ${input.value}`;
+//         input.value = '';
+//     }  
+// });
+
