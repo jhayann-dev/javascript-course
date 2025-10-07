@@ -99,9 +99,35 @@ class App {
 
   constructor() {
     console.log('App is starting');
+    this._getLocalStorage();
     this._getPosition();
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
+    containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    document.addEventListener('keydown', this._handleKeydown.bind(this));
+  }
+
+  _handleKeydown(e) {
+    if (e.key === 'Escape' && !form.classList.contains('hidden')) {
+      this._hideForm();
+      console.log('Form closed via Escape key');
+    }
+  }
+
+  _moveToPopup(e) {
+    const workoutEl = e.target.closest('.workout');
+
+    if (!workoutEl) return;
+    const workout = this.#workouts.find(
+      work => work.id === workoutEl.dataset.id
+    );
+    this.#map.setView(workout.coords, this.#mapZoomLevel, {
+      animate: true,
+      pan: {
+        duration: 1,
+      },
+    });
+    console.log(`Navigated to ${workout.type} workout at`, workout.coords);
   }
 
   _getPosition() {
@@ -158,6 +184,8 @@ class App {
 
     this.#map.on('click', this._showForm.bind(this));
 
+    this._renderStoredWorkouts();
+
     console.log('Default map loaded successfully');
   }
 
@@ -178,7 +206,19 @@ class App {
 
     this.#map.on('click', this._showForm.bind(this));
 
+    this._renderStoredWorkouts();
+
     console.log('Map loaded successfully at user location');
+  }
+
+  _renderStoredWorkouts() {
+    this.#workouts.forEach(workout => {
+      this._renderWorkoutMarker(workout);
+      this._renderWorkout(workout);
+    });
+    if (this.#workouts.length > 0) {
+      console.log(`Rendered ${this.#workouts.length} stored workouts`);
+    }
   }
 
   _showForm(mapE) {
@@ -187,69 +227,68 @@ class App {
     inputDistance.focus();
   }
 
-
-_toggleElevationField() {
-  inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
-  inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
-}
-
-_hideForm() {
-  inputDistance.value = 
-  inputDuration.value = 
-  inputCadence.value = 
-  inputElevation.value =
-  '';
-  form.style.display = 'none';
-  form.classList.add('hidden');
-  setTimeout(() => (form.style.display = 'grid'), 1000);
-
-}
-
-_newWorkout(e) {
-  const validInputs = (...inputs) =>
-    inputs.every(inp => Number.isFinite(inp));
-  const allPositive = (...inputs) => inputs.every(inp => inp > 0);
-
-  e.preventDefault();
-
-  const type = inputType.value;
-  const distance = +inputDistance.value;
-  const duration = +inputDuration.value;
-  const { lat, lng } = this.#mapEvent.latlng;
-  let workout;
-
-  console.log(`Creating ${type} workout:`, { distance, duration, lat, lng });
-
-  if (type === 'running') {
-    const cadence = +inputCadence.value;
-
-    if (
-      !validInputs(distance, duration, cadence) ||
-      !allPositive(distance, duration, cadence)
-    )
-      return alert('Inputs have to be positive numbers!');
-
-    workout = new Running([lat, lng], distance, duration, cadence);
+  _toggleElevationField() {
+    inputElevation.closest('.form__row').classList.toggle('form__row--hidden');
+    inputCadence.closest('.form__row').classList.toggle('form__row--hidden');
   }
-  if (type === 'cycling') {
-    const elevation = +inputElevation.value;
 
-    if (
-      !validInputs(distance, duration, elevation) ||
-      !allPositive(distance, duration)
-    )
-      return alert('Inputs have to be positive numbers!');
+  _hideForm() {
+    inputDistance.value =
+      inputDuration.value =
+      inputCadence.value =
+      inputElevation.value =
+        '';
+    form.style.display = 'none';
+    form.classList.add('hidden');
+    setTimeout(() => (form.style.display = 'grid'), 1000);
+  }
 
-    workout = new Cycling([lat, lng], distance, duration, elevation);
-  } 
+  _newWorkout(e) {
+    const validInputs = (...inputs) =>
+      inputs.every(inp => Number.isFinite(inp));
+    const allPositive = (...inputs) => inputs.every(inp => inp > 0);
 
-  console.log('workout:', workout);
-  this.#workouts.push(workout);
-  this._renderWorkoutMarker(workout);
-  this._renderWorkout(workout);
-  this._hideForm();
+    e.preventDefault();
 
-  console.log('Workout added successfully'); 
+    const type = inputType.value;
+    const distance = +inputDistance.value;
+    const duration = +inputDuration.value;
+    const { lat, lng } = this.#mapEvent.latlng;
+    let workout;
+
+    console.log(`Creating ${type} workout:`, { distance, duration, lat, lng });
+
+    if (type === 'running') {
+      const cadence = +inputCadence.value;
+
+      if (
+        !validInputs(distance, duration, cadence) ||
+        !allPositive(distance, duration, cadence)
+      )
+        return alert('Inputs have to be positive numbers!');
+
+      workout = new Running([lat, lng], distance, duration, cadence);
+    }
+    if (type === 'cycling') {
+      const elevation = +inputElevation.value;
+
+      if (
+        !validInputs(distance, duration, elevation) ||
+        !allPositive(distance, duration)
+      )
+        return alert('Inputs have to be positive numbers!');
+
+      workout = new Cycling([lat, lng], distance, duration, elevation);
+    }
+
+    console.log('workout:', workout);
+    this.#workouts.push(workout);
+    this._renderWorkoutMarker(workout);
+    this._renderWorkout(workout);
+    this._setLocalStorage();
+    this._hideForm();
+
+    console.log('Workout added successfully');
   }
 
   _renderWorkout(workout) {
@@ -290,9 +329,48 @@ _newWorkout(e) {
       )
       .openPopup();
   }
+
+  _setLocalStorage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+    console.log('Workouts saved to local storage');
+  }
+
+  _getLocalStorage() {
+    const data = localStorage.getItem('workouts');
+    console.log('Retrieved workouts from local storage:', data);
+
+    if (!data) return;
+
+    const storedWorkouts = JSON.parse(data);
+    console.log('Retrieved workouts from local storage:', storedWorkouts);
+
+    this.#workouts = storedWorkouts.map(workoutData => {
+      let workout;
+      if (workoutData.type === 'running') {
+        workout = new Running(
+          workoutData.coords,
+          workoutData.distance,
+          workoutData.duration,
+          workoutData.cadence
+        );
+      }
+
+      if (workoutData.type === 'cycling') {
+        workout = new Cycling(
+          workoutData.coords,
+          workoutData.distance,
+          workoutData.duration,
+          workoutData.elevationGain
+        );
+      }
+
+      workout.data = new Date(workoutData.date);
+      workout.id = workoutData.id;
+      workout.clicks = workoutData.clicks;
+      return workout;
+    });
+
+    console.log('Workouts restored as proper objects', this.#workouts);
+  }
 }
-
-
 const app = new App();
-console.log('Hour 2 complete!');
-
